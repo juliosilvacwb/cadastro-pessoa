@@ -3,7 +3,7 @@ const loadForm = (link_pessoa) => {
 }
 
 const getForm = (link_pessoa) => {
-    $('.root').innerHTML =  `<div class="row">
+    $('.root').innerHTML =  `<div class="row fomCadastro">
                                 <form class="col s12">
                                     <input id="href" type="hidden">
                                     <div class="row errors hide"></div>
@@ -51,6 +51,7 @@ const getForm = (link_pessoa) => {
                                         </div>
                                         <div class="input-field col m3 s12">
                                             <a class="waves-effect waves-light btn" onclick="salvar()"><i class="material-icons left">save</i>Salvar</a>
+                                            <a class="waves-effect waves-light btn red" disabled onclick="excluir()" id="excluir"><i class="material-icons left">delete</i>Excluir</a>
                                         </div>
                                     </div>
                                 </form>
@@ -78,17 +79,18 @@ const getForm = (link_pessoa) => {
 }
 
 const loadPessoa = (pessoa) => {
-    $("#href").value = pessoa._links.self.href;
-    $("#nome").value = pessoa.nome;
+    $("#excluir").removeAttribute("disabled");
+    $("#href").value = pessoa._links && pessoa._links.self ? pessoa._links.self.href : '';
+    $("#nome").value = pessoa.nome !== null && pessoa.nome !== undefined ? pessoa.nome : '';
     $("#email").value = pessoa.email !== null && pessoa.email !== undefined ? pessoa.email : '';
     $("#naturalidade").value = pessoa.naturalidade !== null && pessoa.naturalidade !== undefined ? pessoa.naturalidade : '';
     $("#nacionalidade").value = pessoa.nacionalidade !== null & pessoa.nacionalidade !== undefined ? pessoa.nacionalidade : ''; 
-    $("#cpf").value = pessoa.cpf;
+    $("#cpf").value = pessoa.cpf !== null && pessoa.cpf !== undefined ? pessoa.cpf : '';
     $("#dataNascimento").value = pessoa.dataNascimento !== null && pessoa.dataNascimento !== undefined ? pessoa.dataNascimento : '';
 
     if (pessoa.sexo === 'M') {
         $("#sexoM").checked = true;
-    } else {
+    } else if (pessoa.sexo === 'F') {
         $("#sexoF").checked = true;
     }
     document.querySelectorAll("label").forEach(el => {
@@ -111,11 +113,30 @@ const carregarPessoa = () => {
 
     if ( $("#sexoM").checked) {
         pessoa.sexo = 'M';
-    } else {
+    } else if ( $("#sexoF").checked){
         pessoa.sexo = 'F';
     }
 
     return pessoa;
+}
+
+const excluir = () => {
+    const href =  $("#href").value;
+    if (href) {
+        const requestInfo = {
+            method: 'DELETE',
+        };
+
+        fetch(href, requestInfo).then((response) => {
+            response.ok ? 
+                showSuccess(undefined, "Pessoa excluída com sucesso.")
+                : response.json().then((responseBody) => showErrors(responseBody.errors));
+        })
+        .catch((error) => {
+            showErrors([error.message]);
+        });
+
+    }
 }
     
 const salvar = () => {
@@ -133,7 +154,7 @@ const salvar = () => {
 
     fetch(url, requestInfo).then((response) => {
         response.ok ? 
-            response.json().then(responseBody => showSuccess(responseBody)) 
+            response.json().then(responseBody => showSuccess(responseBody, "Os dados da pessoa foram salvos com sucesso.")) 
             : response.json().then((responseBody) => showErrors(responseBody.errors));
     })
     .catch((error) => {
@@ -151,9 +172,16 @@ const showErrors = (errors) => {
     $(".success").classList.add("hide");
 }
 
-const showSuccess = (pessoa) => {
-    $(".success").innerHTML = "Os dados da pessoa foram salvos com sucesso.";
+const showSuccess = (pessoa, mensagem) => {
+    $(".success").innerHTML = mensagem;
     $(".success").classList.remove("hide");
     $(".errors").classList.add("hide");
-    $("#href").value = pessoa._links.self.href;
+    $("#excluir").removeAttribute("disabled");
+    
+    if (pessoa && pessoa._links && pessoa._links.self && pessoa._links.self.href) {
+        $("#href").value = pessoa._links.self.href;
+    } else {
+        $("#href").value = undefined;
+        loadPessoa({});
+    }
 }

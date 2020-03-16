@@ -54,3 +54,7 @@ html, body {
     display: flex;
     justify-content: center;
 }
+
+.fomCadastro {
+    margin-top: 1.5em;;
+}

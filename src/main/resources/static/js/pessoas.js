@@ -52,8 +52,8 @@ const getRows = (pessoas) => {
     let tds = '';
     pessoas.forEach(pessoa => {
         tds = tds + `<tr>
-                        <td>${ pessoa.nome }</td>
-                        <td>${ pessoa.sexo }</td>
+                        <td>${ pessoa.nome !== null && pessoa.nome !== undefined ? pessoa.nome : '' }</td>
+                        <td>${ pessoa.sexo !== null && pessoa.sexo !== undefined ? pessoa.sexo : '' }</td>
                         <td>${ pessoa.email !== null && pessoa.email !== undefined ? pessoa.email : ''}</td>
                         <td>${ pessoa.dataNascimento !== null && pessoa.dataNascimento !== undefined ? pessoa.dataNascimento : '' }</td>
                         <td>${ pessoa.naturalizade !== null && pessoa.naturalizade !== undefined ? pessoa.naturalizade : '' }</td>
