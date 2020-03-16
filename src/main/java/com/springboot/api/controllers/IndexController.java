@@ -25,7 +25,7 @@ public class IndexController implements ErrorController {
     @RequestMapping(value = "/source")
     @ResponseBody
     public String error() {
-        return "http://github.com";
+        return "https://github.com/juliosilvacwb/cadastro-pessoa";
     }
 
     @Override
