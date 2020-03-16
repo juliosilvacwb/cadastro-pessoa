@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset = "ISO-8859-1" />
+        <title>Cadastro de Pessoas</title>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+        <link href = "css/index.css" rel = "stylesheet"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </head>
+    <body>
+        <nav>
+            <div class="nav-wrapper teal">
+                <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+                <div class="container">
+                    <ul class="hide-on-med-and-down">
+                        <li><a onclick="loadForm()">Cadastrar Pessoa</a></li>
+                        <li><a onclick="loadPessoas()">Listar Pessoas</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <ul class="sidenav" id="mobile-demo">
+            <li><a onclick="loadForm()">Cadastrar Pessoa</a></li>
+            <li><a onclick="loadPessoas()">Listar Pessoas</a></li>
+        </ul>
+        <div class="container">
+            <div class="root"></div>
+        </div>
+        <script type="text/javascript" src="js/materialize.min.js"></script>
+        <script type="text/javascript" src="js/form.js"></script>
+        <script type="text/javascript" src="js/pessoas.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+
+   </body>
+</html>
