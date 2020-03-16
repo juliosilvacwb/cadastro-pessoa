@@ -23,10 +23,11 @@ import org.springframework.web.filter.CorsFilter;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String[] AUTH_WHITELIST = {
+        "/source",
         "/actuator/**",
         "/css/**",
         "/js/**",
-        "/",
+        "/img/**",
 
         // -- swagger ui
         "/swagger-resources/**",

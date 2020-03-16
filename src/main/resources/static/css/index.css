@@ -34,6 +34,8 @@ html, body {
     display: flex;
     justify-content: center;
     padding-top: 3em;
+    background-image: url('../img/background.jpg');
+    background-size: cover;
 }
 
 .formLogin {
@@ -43,6 +45,7 @@ html, body {
     height: 25em;
     width: 25em;
     max-width: 100%;
+    background-color: rgba(255, 255, 255, 0.95);;
 }
 
 .lock {

@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class IndexController implements ErrorController {
 
-    @RequestMapping(value = "/home")
+    @RequestMapping(value = "/")
     public String index() {
         return "index";
     }
     
-    @RequestMapping(value = "/")
+    @RequestMapping(value = "/login")
     public String login() {
         return "login";
     }
