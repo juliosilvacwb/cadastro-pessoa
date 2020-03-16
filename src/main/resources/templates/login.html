@@ -15,17 +15,24 @@
                 <form name='f' action="login" method='POST' class="col s12">
                     <div class="row">
                         <div class="input-field col s12" >
-                            <input id="usuario" type="text" class="validate" name='username' value=''>
+                            <input id="usuario" type="text" class="validate" name='username' value='root'>
                             <label for="usuario">Usuário</label>
                         </div>
                     </div>
                     <div class="row">
                         <div class="input-field col s12">
-                            <input id="senha" type="password" class="validate" name='password'>
+                            <input id="senha" type="password" class="validate" name='password' value='toor'>
                             <label for="senha">Senha</label>
                         </div>
                     </div>
-                    <input name="submit" type="submit" value="Entrar" class="waves-effect waves-light btn"/>
+                    <button name="submit" type="submit" class="waves-effect waves-light btn btnEntrar">
+                        Entrar
+                    </button>
+
+                    <div class="auth2" th:each="url : ${urls}">
+                      Entrar com a conta <a th:text="${url.key}" th:href="${url.value}">Client</a>
+                    </div>
+
                 </form>
             </div>
         </div>
