@@ -34,7 +34,7 @@ const getForm = (link_pessoa) => {
                                             <label for="cpf">CPF</label>
                                         </div>
                                         <div class="input-field col m3 s12">
-                                            <input id="dataNascimento" type="text" class="validate">
+                                            <input id="dataNascimento" type="text" class="validate"  maxlength="10">
                                             <label for="dataNascimento">Data Nascimento</label>
                                         </div>
                                         <div class="input-field col m3 s12">
@@ -75,6 +75,9 @@ const getForm = (link_pessoa) => {
             showErrors([error.message]);
         });
     }
+
+    $("#dataNascimento").addEventListener('keyup', function(evt) { formatDate(evt) }, false);
+    $("#cpf").addEventListener('keyup', function(evt) { formataCPF(evt) }, false);
     
 }
 
@@ -99,6 +102,21 @@ const loadPessoa = (pessoa) => {
         }
     });
 }
+
+const formatDate = (event) => {
+    let v = event.target.value;
+    if (v.match(/^\d{2}$/) !== null) {
+        event.target.value = v + '/';
+    } else if (v.match(/^\d{2}\/\d{2}$/) !== null) {
+        event.target.value = v + '/';
+    }
+}
+
+const formataCPF = (event) => {
+    let cpf = event.target.value;
+    cpf = cpf.replace(/[^\d]/g, "");
+    event.target.value =  cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+  }
 
 const carregarPessoa = () => {
     const pessoa = {_links: {self: { href: null}}};

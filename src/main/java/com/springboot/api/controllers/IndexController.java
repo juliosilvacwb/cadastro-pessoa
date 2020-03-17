@@ -11,6 +11,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -39,37 +40,40 @@ public class IndexController implements ErrorController  {
     Map<String, String> oauth2AuthenticationUrls = new HashMap<>();
 
     @RequestMapping(value = "/")
-    public String index(Model model, OAuth2AuthenticationToken authentication) {
+    public String index(Model model, Authentication auth) {
 
-        if ( authentication != null) {
-
-                OAuth2AuthorizedClient client = authorizedClientService
-                        .loadAuthorizedClient(authentication.getAuthorizedClientRegistrationId(), authentication.getName());
-                
-                String userInfoEndpointUri = new String("");
-
-                if(client != null) {
-                    userInfoEndpointUri = client.getClientRegistration()
-                        .getProviderDetails().getUserInfoEndpoint().getUri();
-                }
-                
-                if (!StringUtils.isEmpty(userInfoEndpointUri)) {
-                    RestTemplate restTemplate = new RestTemplate();
-                    HttpHeaders headers = new HttpHeaders();
         
-                    headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + client.getAccessToken()
-                        .getTokenValue());
-        
-                    ParameterizedTypeReference<HashMap<String, String>> responseType = 
-                        new ParameterizedTypeReference<HashMap<String, String>>() {};
+        if ( auth != null && auth instanceof OAuth2AuthenticationToken) {
 
-                    HttpEntity<?> entity = new HttpEntity<>("", headers);
-                    ResponseEntity<HashMap<String, String>> response = restTemplate
-                        .exchange(userInfoEndpointUri, HttpMethod.GET, entity, responseType);
-        
-                    Map<String, String> userAttributes = response.getBody();
-                    model.addAttribute("name", userAttributes.get("name"));
-                }
+            OAuth2AuthenticationToken authentication = (OAuth2AuthenticationToken) auth;
+
+            OAuth2AuthorizedClient client = authorizedClientService
+                    .loadAuthorizedClient(authentication.getAuthorizedClientRegistrationId(), authentication.getName());
+            
+            String userInfoEndpointUri = new String("");
+
+            if(client != null) {
+                userInfoEndpointUri = client.getClientRegistration()
+                    .getProviderDetails().getUserInfoEndpoint().getUri();
+            }
+            
+            if (!StringUtils.isEmpty(userInfoEndpointUri)) {
+                RestTemplate restTemplate = new RestTemplate();
+                HttpHeaders headers = new HttpHeaders();
+    
+                headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + client.getAccessToken()
+                    .getTokenValue());
+    
+                ParameterizedTypeReference<HashMap<String, String>> responseType = 
+                    new ParameterizedTypeReference<HashMap<String, String>>() {};
+
+                HttpEntity<?> entity = new HttpEntity<>("", headers);
+                ResponseEntity<HashMap<String, String>> response = restTemplate
+                    .exchange(userInfoEndpointUri, HttpMethod.GET, entity, responseType);
+    
+                Map<String, String> userAttributes = response.getBody();
+                model.addAttribute("name", userAttributes.get("name"));
+            }
         }
 
         return "index";

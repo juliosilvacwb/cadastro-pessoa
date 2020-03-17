@@ -56,7 +56,7 @@ const getRows = (pessoas) => {
                         <td>${ pessoa.sexo !== null && pessoa.sexo !== undefined ? pessoa.sexo : '' }</td>
                         <td>${ pessoa.email !== null && pessoa.email !== undefined ? pessoa.email : ''}</td>
                         <td>${ pessoa.dataNascimento !== null && pessoa.dataNascimento !== undefined ? pessoa.dataNascimento : '' }</td>
-                        <td>${ pessoa.naturalizade !== null && pessoa.naturalizade !== undefined ? pessoa.naturalizade : '' }</td>
+                        <td>${ pessoa.naturalidade !== null && pessoa.naturalidade !== undefined ? pessoa.naturalidade : '' }</td>
                         <td>${ pessoa.nacionalidade !== null && pessoa.nacionalidade !== undefined ? pessoa.nacionalidade : ''}</td>
                         <td>${ pessoa.cpf }</td>
                         <td>

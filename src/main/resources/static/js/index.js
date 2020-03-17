@@ -3,7 +3,7 @@ const $ = (seletor) => {
     ref = document.querySelector(seletor);
 
     if(ref == undefined) {
-        throw `Não foi possívelidentificar o item ${seletor} no DOM`;
+        throw `Não foi possível identificar o item ${seletor} no DOM`;
     }
 
     return ref;
