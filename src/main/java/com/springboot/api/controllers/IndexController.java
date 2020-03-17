@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.error.ErrorController;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.ResolvableType;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -26,67 +27,74 @@ import org.springframework.web.client.RestTemplate;
  * IndexController
  */
 @Controller
-public class IndexController implements ErrorController {
-
+public class IndexController implements ErrorController  {
+ 
+    @Autowired
+    private ClientRegistrationRepository clientRegistrationRepository;
+    
     @Autowired
     private OAuth2AuthorizedClientService authorizedClientService;
 
     private static String authorizationRequestBaseUri = "oauth2/authorization";
     Map<String, String> oauth2AuthenticationUrls = new HashMap<>();
 
-    @Autowired
-    private ClientRegistrationRepository clientRegistrationRepository;
-
     @RequestMapping(value = "/")
     public String index(Model model, OAuth2AuthenticationToken authentication) {
 
-        OAuth2AuthorizedClient client = authorizedClientService
-                .loadAuthorizedClient(authentication.getAuthorizedClientRegistrationId(), authentication.getName());
+        if ( authentication != null) {
 
+                OAuth2AuthorizedClient client = authorizedClientService
+                        .loadAuthorizedClient(authentication.getAuthorizedClientRegistrationId(), authentication.getName());
+                
+                String userInfoEndpointUri = new String("");
+
+                if(client != null) {
+                    userInfoEndpointUri = client.getClientRegistration()
+                        .getProviderDetails().getUserInfoEndpoint().getUri();
+                }
+                
+                if (!StringUtils.isEmpty(userInfoEndpointUri)) {
+                    RestTemplate restTemplate = new RestTemplate();
+                    HttpHeaders headers = new HttpHeaders();
         
-        String userInfoEndpointUri = new String("");
-        if(client != null) {
-            userInfoEndpointUri = client.getClientRegistration()
-                .getProviderDetails().getUserInfoEndpoint().getUri();
-        }
+                    headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + client.getAccessToken()
+                        .getTokenValue());
         
-        if (!StringUtils.isEmpty(userInfoEndpointUri)) {
-            RestTemplate restTemplate = new RestTemplate();
-            HttpHeaders headers = new HttpHeaders();
+                    ParameterizedTypeReference<HashMap<String, String>> responseType = 
+                        new ParameterizedTypeReference<HashMap<String, String>>() {};
 
-            headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + client.getAccessToken()
-                .getTokenValue());
-
-            HttpEntity<?> entity = new HttpEntity<>("", headers);
-            ResponseEntity<Map>response = restTemplate
-                .exchange(userInfoEndpointUri, HttpMethod.GET, entity, Map.class);
-
-            Map userAttributes = response.getBody();
-            model.addAttribute("name", userAttributes.get("name"));
+                    HttpEntity<?> entity = new HttpEntity<>("", headers);
+                    ResponseEntity<HashMap<String, String>> response = restTemplate
+                        .exchange(userInfoEndpointUri, HttpMethod.GET, entity, responseType);
+        
+                    Map<String, String> userAttributes = response.getBody();
+                    model.addAttribute("name", userAttributes.get("name"));
+                }
         }
 
         return "index";
     }
     
+    @SuppressWarnings("unchecked")
     @RequestMapping(value = "/login")
     public String login(Model model) {
 
         Iterable<ClientRegistration> clientRegistrations = null;
         ResolvableType type = ResolvableType.forInstance(clientRegistrationRepository).as(Iterable.class);
-        if (type != ResolvableType.NONE && 
-
-        ClientRegistration.class.isAssignableFrom(type.resolveGenerics()[0])) {
+        
+        if (type != ResolvableType.NONE &&  ClientRegistration.class.isAssignableFrom(type.resolveGenerics()[0])) {
             clientRegistrations = (Iterable<ClientRegistration>) clientRegistrationRepository;
         }
     
-        clientRegistrations.forEach(registration -> 
-        oauth2AuthenticationUrls.put(registration.getClientName(), 
-        authorizationRequestBaseUri + "/" + registration.getRegistrationId()));
-        model.addAttribute("urls", oauth2AuthenticationUrls);
+        if ( clientRegistrations != null) {
+            clientRegistrations.forEach(registration -> 
+                oauth2AuthenticationUrls.put(registration.getClientName(), authorizationRequestBaseUri + "/" + registration.getRegistrationId()));
+            
+            model.addAttribute("urls", oauth2AuthenticationUrls);
+        }
 
         return "login";
     }
-    
     
     @RequestMapping(value = "/source")
     @ResponseBody
@@ -94,17 +102,16 @@ public class IndexController implements ErrorController {
         return "https://github.com/juliosilvacwb/cadastro-pessoa";
     }
     
+    @RequestMapping(value = "/login/oauth2/code/google")
+    @ResponseBody
+    public String alth2() {
+        return "home";
+    }
     
     @Override
     @RequestMapping("/error")
     public String getErrorPath() {
         return "index";
-    }
-    
-    @RequestMapping(value = "/login/oauth2/code/google")
-    @ResponseBody
-    public String alth2() {
-        return "home";
     }
     
 }

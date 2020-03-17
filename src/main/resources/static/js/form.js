@@ -120,6 +120,10 @@ const carregarPessoa = () => {
     return pessoa;
 }
 
+const excluded = () => {
+    $("#excluir").classList.add('disabled');
+    showSuccess(undefined, "Pessoa excluída com sucesso.")
+}
 const excluir = () => {
     const href =  $("#href").value;
     if (href) {
@@ -129,7 +133,7 @@ const excluir = () => {
 
         fetch(href, requestInfo).then((response) => {
             response.ok ? 
-                showSuccess(undefined, "Pessoa excluída com sucesso.")
+                excluded()
                 : response.json().then((responseBody) => showErrors(responseBody.errors));
         })
         .catch((error) => {

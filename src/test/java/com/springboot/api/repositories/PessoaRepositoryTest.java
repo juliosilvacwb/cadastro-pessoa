@@ -18,6 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -30,14 +31,14 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 /**
  * UserRepositoryTest
  */
-@SpringBootTest
 @ActiveProfiles("test")
+@SpringBootTest(webEnvironment=WebEnvironment.RANDOM_PORT)
 @ExtendWith(SpringExtension.class)
 public class PessoaRepositoryTest {
 
     @Autowired
     private PessoaRepository pessoaRepository;
-    
+
     private Pessoa pessoa;
     private Pageable pageable;
 
@@ -84,5 +85,5 @@ public class PessoaRepositoryTest {
         Optional<Pessoa> pessoa = this.pessoaRepository.findByEmail("fulano@email.com");
         assertNotNull(pessoa.get());
     }
-   
+
 }

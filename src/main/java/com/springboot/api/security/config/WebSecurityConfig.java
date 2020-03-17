@@ -2,7 +2,6 @@ package com.springboot.api.security.config;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -72,14 +71,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .formLogin()
             .defaultSuccessUrl("/home")
             .loginPage("/login").permitAll()
-            .and()
+        .and()
             .httpBasic()
         .and()
             .oauth2Login()
             .defaultSuccessUrl("/home")
             .loginPage("/login").permitAll()
             .clientRegistrationRepository(clientRegistrationRepository())
-            .authorizedClientService(authorizedClientService());
+            .authorizedClientService(authorizedClientService())
+        .and()
+            .logout()
+            .invalidateHttpSession(true)
+            .deleteCookies("JSESSIONID")
+            .logoutSuccessUrl("/login");
 
         httpSecurity.headers().cacheControl();
         
@@ -110,20 +114,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
  
     @Bean
     public OAuth2AuthorizedClientService authorizedClientService() {
-    
-        return new InMemoryOAuth2AuthorizedClientService(
-        clientRegistrationRepository());
+        return new InMemoryOAuth2AuthorizedClientService(clientRegistrationRepository());
     }
 
     @Bean
     public ClientRegistrationRepository clientRegistrationRepository() {
         List<ClientRegistration> registrations = Arrays.asList(getRegistration("google"));
-
         return new InMemoryClientRegistrationRepository(registrations);
     }
 
     private ClientRegistration getRegistration(String client) {
-        System.out.println(CLIENT_PROPERTY_KEY + client + ".client-id");
         String clientId = env.getProperty(CLIENT_PROPERTY_KEY + client + ".client-id");
 
         if (clientId == null) {
