@@ -2,4 +2,9 @@
 
 API em Java que permite cadastro, alteração, remoção e consulta de pessoas.
 
-https://kadastro-pessoa.herokuapp.com/
+Api disponível em:
+  https://kadastro-pessoa.herokuapp.com/
+  
+Imagem docker disponível em:
+  https://hub.docker.com/repository/docker/juliosilvacwb/cadastro-pessoa
+
